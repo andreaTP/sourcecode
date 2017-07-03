@@ -3,13 +3,16 @@ script:
   - sbt ++$TRAVIS_SCALA_VERSION sourcecodeJVM/test:run sourcecodeJS/test:run
 scala:
   - 2.10.6
-  - 2.11.8
-  - 2.12.0
+  - 2.11.11
+  - 2.12.2
 jdk:
   - openjdk7
   - oraclejdk8
+env:
+  - SCALAJS_VERSION=0.6.18
+  - SCALAJS_VERSION=1.0.0-M1
 matrix:
   exclude:
-    - scala: 2.12.0
+    - scala: 2.12.2
       jdk: openjdk7
 sudo: false

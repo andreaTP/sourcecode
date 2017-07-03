@@ -1,5 +1,4 @@
-
-crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.0")
+crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
 
 def macroDependencies(version: String) =
   Seq(
@@ -14,7 +13,7 @@ def macroDependencies(version: String) =
 
 lazy val sourcecode = crossProject.settings(
   version := "0.1.3",
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.11.11",
   name := "sourcecode"  ,
   organization := "com.lihaoyi",
   libraryDependencies ++= macroDependencies(scalaVersion.value),
@@ -47,6 +46,8 @@ lazy val sourcecode = crossProject.settings(
         <url>https://github.com/lihaoyi</url>
       </developer>
     </developers>
+).jsSettings(
+  scalaJSUseMainModuleInitializer in Test := true
 )
 
 lazy val js = sourcecode.js
