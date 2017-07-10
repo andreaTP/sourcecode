@@ -1,4 +1,42 @@
+<<<<<<< HEAD
 crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
+=======
+import sbtcrossproject.{crossProject, CrossType}
+import OsgiKeys._
+
+val scala210 = "2.10.6"
+val scala211 = "2.11.11"
+val scala212 = "2.12.2"
+val scala213 = "2.13.0-M1"
+val baseSettings = Seq(
+  organization := "com.lihaoyi",
+  name := "sourcecode",
+  version := "0.1.4",
+  scalaVersion := scala211,
+  crossScalaVersions := Seq(scala210, scala211, scala212, scala213),
+  scmInfo := Some(ScmInfo(
+    browseUrl = url("https://github.com/lihaoyi/sourcecode"),
+    connection = "scm:git:git@github.com:lihaoyi/sourcecode.git"
+  )),
+  homepage := Some(url("https://github.com/lihaoyi/sourcecode")),
+  licenses := Seq("MIT" -> url("http://www.opensource.org/licenses/mit-license.html")),
+  developers += Developer(
+    email = "haoyi.sg@gmail.com",
+    id = "lihaoyi",
+    name = "Li Haoyi",
+    url = url("https://github.com/lihaoyi")
+  ),
+  publishTo := Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+)
+lazy val noPublish = Seq(
+  publishArtifact := false,
+  publish := {},
+  publishLocal := {}
+)
+
+baseSettings
+noPublish
+>>>>>>> f917ee842958bc3dd99b51b1c71837a6e3cd8697
 
 def macroDependencies(version: String) =
   Seq(
@@ -11,6 +49,7 @@ def macroDependencies(version: String) =
     else
       Seq())
 
+<<<<<<< HEAD
 lazy val sourcecode = crossProject.settings(
   version := "0.1.3",
   scalaVersion := "2.11.11",
@@ -49,6 +88,35 @@ lazy val sourcecode = crossProject.settings(
 ).jsSettings(
   scalaJSUseMainModuleInitializer in Test := true
 )
+=======
+lazy val sourcecode = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .settings(
+    baseSettings,
+    libraryDependencies ++= macroDependencies(scalaVersion.value),
+    test in Test := (run in Test).toTask("").value,
+    unmanagedSourceDirectories in Compile ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) if n >= 12 =>
+          Seq(baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-2.11")
+        case _ =>
+          Seq()
+      }
+    },
+    // Osgi settings
+    osgiSettings,
+    exportPackage := Seq("sourcecode.*"),
+    privatePackage := Seq(),
+    dynamicImportPackage := Seq("*")
+  )
+  .enablePlugins(SbtOsgi)
+  .jsSettings(
+    scalaJSUseMainModuleInitializer in Test := true // use JVM-style main.
+  )
+  .nativeSettings(
+    crossScalaVersions := Seq(scala211)
+  )
+>>>>>>> f917ee842958bc3dd99b51b1c71837a6e3cd8697
 
 lazy val js = sourcecode.js
 lazy val jvm = sourcecode.jvm
+lazy val native = sourcecode.native
